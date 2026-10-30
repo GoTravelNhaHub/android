@@ -152,6 +152,8 @@ class GoTravelNhaApi(val client: ApiClient) {
     suspend fun shareTrip(id: String, enabled: Boolean): String? =
         client.send<ShareBody, ShareResponse>("POST", "/api/trips/${id.encoded()}/share", ShareBody(enabled)).shareId
 
+    suspend fun plannerChat(body: ChatBody): AgentTurn = client.send("POST", "/api/planner/chat", body)
+
     suspend fun plan(body: PlannerBody): PlannerResult = client.send("POST", "/api/planner/itinerary", body)
 
     suspend fun saveGeneration(generationId: String): String =

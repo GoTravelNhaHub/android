@@ -45,13 +45,11 @@ class AuthManager(context: Context) {
     /** Intent that opens the Keycloak page; hand its result to [completeSignIn]. */
     suspend fun signInIntent(register: Boolean, uiLocale: String): Intent {
         val config = configuration()
-        val extras = buildMap {
-            put("ui_locales", uiLocale)
-            if (register) put("prompt", "create")
-        }
+        // AppAuth refuses these two as additional parameters: they have their own builder methods
         val request = AuthorizationRequest.Builder(config, BuildConfig.OIDC_CLIENT_ID, ResponseTypeValues.CODE, Uri.parse(BuildConfig.OIDC_REDIRECT_URI))
             .setScopes("openid", "profile", "email", "offline_access")
-            .setAdditionalParameters(extras)
+            .setUiLocales(uiLocale)
+            .apply { if (register) setPrompt("create") }
             .build()
         return service.getAuthorizationRequestIntent(request)
     }

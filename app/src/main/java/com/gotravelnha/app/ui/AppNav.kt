@@ -1,8 +1,10 @@
 package com.gotravelnha.app.ui
 
 import android.app.Activity
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -76,12 +78,16 @@ fun AppNav(deepLinkSlug: String?, onDeepLinkHandled: () -> Unit) {
     val scope = rememberCoroutineScope()
 
     val signInLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        if (result.resultCode == Activity.RESULT_OK || result.data != null) state.completeSignIn(result.data)
+        if (result.resultCode == Activity.RESULT_OK || result.data != null) state.completeSignIn(result.data) else state.afterSignIn = null
     }
     val signIn: (Boolean) -> Unit = { register ->
         scope.launch {
             runCatching { signInLauncher.launch(state.signInIntent(register)) }
-                .onFailure { state.authError = context.getString(R.string.signin_unavailable) }
+                .onFailure {
+                    Log.w("GoTravelNha", "Sign-in could not start", it)
+                    state.afterSignIn = null
+                    state.authError = context.getString(R.string.signin_unavailable)
+                }
         }
     }
 
@@ -104,6 +110,18 @@ fun AppNav(deepLinkSlug: String?, onDeepLinkHandled: () -> Unit) {
     val backStack by nav.currentBackStackEntryAsState()
     val current = backStack?.destination?.route
 
+    // My Trips needs an account: open it after sign-in, and leave it when the session ends
+    LaunchedEffect(state.signedIn, current) {
+        if (state.signedIn) {
+            state.afterSignIn?.let {
+                state.afterSignIn = null
+                routes.tab(it)
+            }
+        } else if (current == Tab.Trips.route) {
+            routes.tab(Tab.Explore.route)
+        }
+    }
+
     CompositionLocalProvider(LocalSignIn provides signIn) {
         Scaffold(
             bottomBar = {
@@ -112,7 +130,14 @@ fun AppNav(deepLinkSlug: String?, onDeepLinkHandled: () -> Unit) {
                         Tab.entries.forEach { tab ->
                             NavigationBarItem(
                                 selected = current == tab.route,
-                                onClick = { routes.tab(tab.route) },
+                                onClick = {
+                                    if (tab == Tab.Trips && !state.signedIn) {
+                                        state.afterSignIn = tab.route
+                                        signIn(false)
+                                    } else {
+                                        routes.tab(tab.route)
+                                    }
+                                },
                                 icon = { Icon(tab.icon, null) },
                                 label = { Text(stringResource(tab.label), maxLines = 1) },
                             )
@@ -121,7 +146,7 @@ fun AppNav(deepLinkSlug: String?, onDeepLinkHandled: () -> Unit) {
                 }
             },
         ) { padding ->
-            NavHost(nav, startDestination = Tab.Explore.route, modifier = Modifier.padding(padding)) {
+            NavHost(nav, startDestination = Tab.Explore.route, modifier = Modifier.padding(padding).consumeWindowInsets(padding)) {
                 composable(Tab.Explore.route) {
                     ExploreScreen(state, routes, onCommunityDestination = { destination ->
                         state.communityDestination = destination

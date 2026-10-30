@@ -29,11 +29,9 @@ import androidx.compose.ui.unit.dp
 import com.gotravelnha.app.R
 import com.gotravelnha.app.data.TripSummary
 import com.gotravelnha.app.ui.AppState
-import com.gotravelnha.app.ui.LocalSignIn
 import com.gotravelnha.app.ui.Routes
 import com.gotravelnha.app.ui.components.EmptyState
 import com.gotravelnha.app.ui.components.LoadContent
-import com.gotravelnha.app.ui.components.SignInPrompt
 import com.gotravelnha.app.ui.components.TripCardView
 import com.gotravelnha.app.ui.components.rememberLoader
 import java.time.LocalDate
@@ -44,19 +42,14 @@ import java.time.format.FormatStyle
 @Composable
 fun TripsScreen(state: AppState, routes: Routes) {
     var tab by rememberSaveable { mutableIntStateOf(0) }
-    val signIn = LocalSignIn.current
     Column(Modifier.fillMaxSize()) {
         Text(stringResource(R.string.tab_trips), style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold, modifier = Modifier.padding(16.dp, 16.dp, 16.dp, 8.dp))
         PrimaryTabRow(selectedTabIndex = tab) {
             Tab(tab == 0, { tab = 0 }, text = { Text(stringResource(R.string.trips_mine)) })
             Tab(tab == 1, { tab = 1 }, text = { Text(stringResource(R.string.trips_saved)) })
         }
-        if (!state.signedIn) {
-            SignInPrompt(stringResource(R.string.trips_sign_in_text), onSignIn = { signIn(false) })
-        } else if (tab == 0) {
-            MyTrips(state, routes)
-        } else {
-            SavedTrips(state, routes)
+        if (state.signedIn) {
+            if (tab == 0) MyTrips(state, routes) else SavedTrips(state, routes)
         }
     }
 }

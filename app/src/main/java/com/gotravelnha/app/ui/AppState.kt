@@ -35,6 +35,9 @@ class AppState(application: Application) : AndroidViewModel(application) {
         private set
     var authError by mutableStateOf<String?>(null)
 
+    /** Tab to open once the sign-in in progress succeeds */
+    var afterSignIn by mutableStateOf<String?>(null)
+
     var plannerSeed by mutableStateOf<PlannerSeed?>(null)
     var communityDestination by mutableStateOf<String?>(null)
 
@@ -52,7 +55,11 @@ class AppState(application: Application) : AndroidViewModel(application) {
     fun completeSignIn(data: Intent?) {
         viewModelScope.launch {
             runCatching { app.auth.completeSignIn(data) }
-                .onFailure { authError = it.message ?: "sign-in failed" }
+                .onSuccess { completed -> if (!completed) afterSignIn = null }
+                .onFailure {
+                    afterSignIn = null
+                    authError = it.message ?: "sign-in failed"
+                }
         }
     }
 

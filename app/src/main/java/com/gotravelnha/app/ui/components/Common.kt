@@ -21,7 +21,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Place
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -102,13 +101,6 @@ fun SectionTitle(title: String, modifier: Modifier = Modifier, subtitle: String?
             if (subtitle != null) Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
         trailing?.invoke()
-    }
-}
-
-@Composable
-fun SignInPrompt(text: String, onSignIn: () -> Unit, modifier: Modifier = Modifier) {
-    EmptyState(stringResource(R.string.signin_required_title), text, modifier) {
-        Button(onClick = onSignIn) { Text(stringResource(R.string.action_sign_in)) }
     }
 }
 

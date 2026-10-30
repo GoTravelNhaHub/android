@@ -265,6 +265,57 @@ data class PlannerResult(
 )
 
 @Serializable
+data class ChatMessage(val role: String, val text: String)
+
+@Serializable
+data class BriefTraveller(val age: Int)
+
+@Serializable
+data class AgentBrief(
+    val destination: String? = null,
+    val startDate: String? = null,
+    val endDate: String? = null,
+    val travellers: List<BriefTraveller> = emptyList(),
+    val budget: Double? = null,
+    val pace: String? = null,
+    val interests: String? = null,
+)
+
+@Serializable
+data class ChatPlan(val title: String, val days: List<String>)
+
+@Serializable
+data class ChatBody(
+    val messages: List<ChatMessage>,
+    val brief: AgentBrief,
+    val language: String,
+    val plan: ChatPlan? = null,
+)
+
+@Serializable
+data class AgentTraveller(val age: Int, val label: String? = null)
+
+@Serializable
+data class AgentUpdates(
+    val destination: String? = null,
+    val startDate: String? = null,
+    val endDate: String? = null,
+    val travellers: List<AgentTraveller>? = null,
+    val budget: Double? = null,
+    val pace: String? = null,
+    val interests: String? = null,
+)
+
+@Serializable
+data class AgentTurn(
+    val reply: String = "",
+    val updates: AgentUpdates = AgentUpdates(),
+    val action: String = "none",
+    val change: String? = null,
+    val quickReplies: List<String> = emptyList(),
+)
+
+@Serializable
 data class IdRef(val id: String)
 
 @Serializable
