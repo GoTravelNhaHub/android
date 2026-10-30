@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Map pin with a paper plane cut-out, on the brand blue background -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,28C43.5,28 35,36.5 35,47C35,61 54,80 54,80C54,80 73,61 73,47C73,36.5 64.5,28 54,28Z" />
+    <path
+        android:fillColor="#0066E4"
+        android:pathData="M45,47L63,39L57,56L53.5,50.5L45,47Z" />
+</vector>
