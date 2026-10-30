@@ -9,6 +9,9 @@
         <intent>
             <action android:name="android.support.customtabs.action.CustomTabsService" />
         </intent>
+        <!-- Partner apps, so links open in them on Android 8–10 (booking/PartnerLauncher.kt) -->
+        <package android:name="com.klook" />
+        <package android:name="ctrip.english" />
     </queries>
 
     <application
