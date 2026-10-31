@@ -10,7 +10,7 @@ export JAVA_HOME=$(/usr/libexec/java_home -v 21)   # Gradle 8.14 does not run on
 ./gradlew assembleDebug          # app/build/outputs/apk/debug/app-debug.apk
 ./gradlew testDebugUnitTest      # booking logic (same cases as backend/test/partner-link-resolver.test.ts)
 ./gradlew lintDebug
-./gradlew assembleRelease        # needs a signing config before it can be published
+./gradlew bundleRelease          # needs keystore.properties to be signed: docs/android-release-audit.md
 
 # Local backend (:3002) and Keycloak (:8080) from the emulator
 ./gradlew installDebug -PgtnApiBaseUrl=http://10.0.2.2:3002 -PgtnOidcIssuer=http://10.0.2.2:8080/realms/gotravelnha
